@@ -10,31 +10,35 @@ app.get('/', (req, res) => {
 });
 
 let users = [];
+let logs = []
+
 
 app.use(express.urlencoded());
 
 app.post('/api/users', (req, res) => {
     const username = req.body.username;
+    const id = users.length.toString();
     const newUser = {
+        _id: id,
         username: username,
-        _id: users.length,
-        count: 0,
+    };
+    const newUserLog = {
+        _id: id,
         log: [],
     }
     users.push(newUser);
-    res.json({
-        username: newUser.username,
-        _id: newUser._id,
-    });
+    logs.push(newUserLog);
+    res.json(newUser);
 })
 
 app.get('/api/users', (req, res) => {
     res.send(users);
 })
 
+
 app.post('/api/users/:_id/exercises', (req, res) => {
     const description = req.body.description;
-    const duration = req.body.duration;
+    const duration = Number(req.body.duration);
     const optionalDate = req.body.date;
     let date;
     if (!optionalDate) {
@@ -48,23 +52,23 @@ app.post('/api/users/:_id/exercises', (req, res) => {
         date: date,
     }
     const id = req.params._id;
-    users[id].log.push(newExercise);
-    users[id].count += 1;
+    logs[id].log.push(newExercise);
     res.json({
         _id: id,
         username: users[id].username,
-        description: description,
-        duration: duration,
         date: date.toDateString(),
+        duration: duration,
+        description: description,
     })
 })
 app.get('/api/users/:_id/logs', (req, res) => {
-    const user = users[req.params._id];
+    const id = req.params._id;
     const from = req.query.from;
     const to = req.query.to;
     const limit = req.query.limit;
     let filteredLog = [];
-    user.log.forEach(exercise => {
+    const log = logs[id].log;
+    log.forEach(exercise => {
         let exerciseCopy = structuredClone(exercise);
         const exerciseDate = exerciseCopy.date;
         const exerciseDateTime = exerciseDate.getTime();
@@ -78,10 +82,11 @@ app.get('/api/users/:_id/logs', (req, res) => {
         }
     });
 
+    const user = users[id];
     res.json({
         username: user.username,
-        count: user.count,
-        _id: user._id,
+        count: log.length,
+        _id: id,
         log: filteredLog,
     });
 })
