@@ -35,7 +35,7 @@ app.get('/api/users', (req, res) => {
 app.post('/api/users/:_id/exercises', (req, res) => {
     const description = req.body.description;
     const duration = req.body.duration;
-    const date = new Date(Date.parse(req.body.date)).toDateString();
+    const date = new Date(Date.parse(req.body.date));
     const newExercise = {
         description: description,
         duration: duration,
@@ -49,7 +49,7 @@ app.post('/api/users/:_id/exercises', (req, res) => {
         username: users[id].username,
         description: description,
         duration: duration,
-        date: date,
+        date: date.toDateString(),
     })
 })
 
