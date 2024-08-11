@@ -38,7 +38,7 @@ app.post('/api/users/:_id/exercises', (req, res) => {
     const optionalDate = req.body.date;
     let date;
     if (!optionalDate) {
-        date = Date.now()
+        date = new Date(Date.now());
     } else {
         date = new Date(Date.parse(optionalDate));
     }
