@@ -58,6 +58,33 @@ app.post('/api/users/:_id/exercises', (req, res) => {
         date: date.toDateString(),
     })
 })
+app.get('/api/users/:_id/logs', (req, res) => {
+    const user = users[req.params._id];
+    const from = req.query.from;
+    const to = req.query.to;
+    const limit = req.query.limit;
+    let filteredLog = [];
+    user.log.forEach(exercise => {
+        let exerciseCopy = structuredClone(exercise);
+        const exerciseDate = exerciseCopy.date;
+        const exerciseDateTime = exerciseDate.getTime();
+        if (
+            (!from || exerciseDateTime > Date.parse(from))
+            && (!to || exerciseDateTime < Date.parse(to))
+            && (!limit || filteredLog.length < limit)
+        ) {
+            exerciseCopy.date = exerciseDate.toDateString();
+            filteredLog.push(exerciseCopy);
+        }
+    });
+
+    res.json({
+        username: user.username,
+        count: user.count,
+        _id: user._id,
+        log: filteredLog,
+    });
+})
 
 
 const listener = app.listen(process.env.PORT || 3000, () => {
