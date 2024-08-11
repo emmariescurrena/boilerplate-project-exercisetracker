@@ -17,10 +17,40 @@ app.post('/api/users', (req, res) => {
     const username = req.body.username;
     const newUser = {
         username: username,
-        _id: users.length
+        _id: users.length,
+        count: 0,
+        log: [],
     }
     users.push(newUser);
-    res.json(newUser);
+    res.json({
+        username: newUser.username,
+        _id: newUser._id,
+    });
+})
+
+app.get('/api/users', (req, res) => {
+    res.send(users);
+})
+
+app.post('/api/users/:_id/exercises', (req, res) => {
+    const description = req.body.description;
+    const duration = req.body.duration;
+    const date = new Date(Date.parse(req.body.date)).toDateString();
+    const newExercise = {
+        description: description,
+        duration: duration,
+        date: date,
+    }
+    const id = req.params._id;
+    users[id].log.push(newExercise);
+    users[id].count += 1;
+    res.json({
+        _id: id,
+        username: users[id].username,
+        description: description,
+        duration: duration,
+        date: date,
+    })
 })
 
 
