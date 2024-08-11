@@ -14,12 +14,13 @@ let users = [];
 app.use(express.urlencoded());
 
 app.post('/api/users', (req, res) => {
-    const user = req.body.username;
-    users.push(user)
-    res.json({
-        username: user,
-        _id: users.indexOf(user)
-    })
+    const username = req.body.username;
+    const newUser = {
+        username: username,
+        _id: users.length
+    }
+    users.push(newUser);
+    res.json(newUser);
 })
 
 
