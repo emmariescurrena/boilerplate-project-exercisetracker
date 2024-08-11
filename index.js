@@ -35,7 +35,13 @@ app.get('/api/users', (req, res) => {
 app.post('/api/users/:_id/exercises', (req, res) => {
     const description = req.body.description;
     const duration = req.body.duration;
-    const date = new Date(Date.parse(req.body.date));
+    const optionalDate = req.body.date;
+    let date;
+    if (!optionalDate) {
+        date = Date.now()
+    } else {
+        date = new Date(Date.parse(optionalDate));
+    }
     const newExercise = {
         description: description,
         duration: duration,
